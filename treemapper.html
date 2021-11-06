@@ -2,17 +2,33 @@
     <head>
         <script type="text/javascript" src="https://unpkg.com/papaparse@5.3.1/papaparse.min.js"></script>
 	<script src="https://cdn.plot.ly/plotly-2.4.2.min.js"></script>
+	<title>Treemap</title>
 	<style>
+          @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 	  html {
-	    font: 14px Arial;
+	    font: 14px Poppins;
+	  }
+	  input {
+	    margin: 10px;
 	  }
 	  #link {
 	    display: block;
 	    background: #808080;
-	    padding: 4px;
+	    padding: 10px;
+	    margin: 10px;
+	    border-radius: 10px;
 	  }
 	  #link * {
 	    color: #fff;
+	  }
+	  #viz {
+	    height: calc(100% - 100px);
+	    display: none;
+	  }
+	  iframe {
+	    width: 100%;
+	    height: 100%;
+	    display: none;
 	  }
 	</style>
     </head>
@@ -23,11 +39,13 @@
 	  <span>How to use this:<span>
 	  <ol>
 	    <li>Create a spreadsheet with the following columns:
-	      ID, Label, ParentID, Values, and Resources</li>
+	      ID, Label, ParentID, Value, and Resources</li>
 	    <li>Save as CSV</li>
 	    <li>Select it using the input box above ^</li>
 	  </ol>
 	</div>
+	<iframe>
+	</iframe>
         <script>
           Array.prototype.pluck = function(key) {
             return this.map(function(object) { return object[key]; });
@@ -43,25 +61,53 @@
 		  const viz = document.querySelector("#viz");
 		  const tooltip = document.querySelector("#link");
 		  tooltip.innerHTML = "Select a resource above";
+		  fileSelector.style.display = "none";
+		  viz.style.display = "block";
+                  document.querySelector("iframe").style.display = "block";
 		  Plotly.newPlot(viz,
 		    [{
 		      type: "treemap",
 		      ids: results.data.pluck("ID"),
 		      labels: results.data.pluck("Label"),
 		      parents: results.data.pluck("ParentID"),
-		      values: results.data.pluck("Values"),
+		      values: results.data.pluck("Value"),
 		      customdata: results.data.pluck("Resources"),
-		      hoverinfo: "label"
-		    }]
+		      hoverinfo: "label",
+		      textfont: {
+		        family: 'Poppins, Arial, sans-serif',
+			size: 24
+		      }
+		    }],
+		    {},
+		    {
+		      responsive: true
+		    }
 		  );
 		  viz.on("plotly_click", (evt) => {
 		    let point = evt.points[0];
 		    if (point["customdata"] === null) {
 		      tooltip.innerHTML = "No resources found for " + point["label"];
+                      document.querySelector("iframe").src = "";
 		    } else {
+		      let url = point["customdata"];
+		      // Make Google Slides presentation-mode
+		      if (url.slice(0, 24) == "https://docs.google.com/" && url.includes("/presentation/")) {
+		        if (url.includes("/embed")) {
+			  // Do nothing
+			} else if (url.includes("/edit#")) {
+		          url = url.replace(/[^\/]+\#/g, "embed?");
+			} else if (url.includes("/edit")) {
+		          url = url.replace(/[^\/]+$/g, "embed");
+			} else if (url.match(/\//g).length == 5) {
+			  url = url + "/embed";
+			} else if (url.match(/\//g).length == 6) {
+			  url = url + "embed";
+			}
+		      }
 		      tooltip.innerHTML = '<a href="' + point["customdata"] +
-		        '" target="_blank">Click here to see resources for ' +
-			point["label"] + '</a>';
+		        '" target="_blank">Click to open ' +
+			point["label"] + ' resources in another tab</a>';
+                      document.querySelector("iframe").src = url;
 		    }
 		  });
                 }
