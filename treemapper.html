@@ -64,6 +64,7 @@
 		  fileSelector.style.display = "none";
 		  viz.style.display = "block";
                   document.querySelector("iframe").style.display = "block";
+		  document.title = results.data.pluck("Label")[0] + " - Treemap";
 		  Plotly.newPlot(viz,
 		    [{
 		      type: "treemap",
