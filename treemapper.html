@@ -2,31 +2,32 @@
     <head>
         <script type="text/javascript" src="https://unpkg.com/papaparse@5.3.1/papaparse.min.js"></script>
 	<script src="https://cdn.plot.ly/plotly-2.4.2.min.js"></script>
+	    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300&family=Ubuntu:wght@300&family=Zen+Antique&display=swap" rel="stylesheet">
 	<style>
 	  html {
-	    font: 14px Arial;
+	    font-family: 'Zen Antique', serif;
 	  }
 	  #link {
 	    display: block;
-	    background: #808080;
+	    background: #0c0c0c;
 	    padding: 4px;
 	  }
 	  #link * {
-	    color: #fff;
+	    color: #fcfcfc;
 	  }
 	</style>
     </head>
     <body>
-        <input type="file" id="fileselector" accept=".csv">
-	<div id="viz"></div>
+        
+	
 	<div id="link">
-	  <span>How to use this:<span>
+		<span><h2>How to use this:</h2><span>
 	  <ol>
 	    <li>Create a spreadsheet with the following columns:
 	      ID, Label, ParentID, Values, and Resources</li>
 	    <li>Save as CSV</li>
-	    <li>Select it using the input box above ^</li>
-	  </ol>
+	    <li>Select it using the input box above</li>
+	  </ol><div class="choosefile"> <center><input type="file" id="fileselector" accept=".csv"></center></div>
 	</div>
         <script>
           Array.prototype.pluck = function(key) {
